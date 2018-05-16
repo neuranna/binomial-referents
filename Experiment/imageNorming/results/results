@@ -1,0 +1,139 @@
+#
+# Results on Tuesday November 28 2017 16:06:12 UTC.
+# USER AGENT: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:57.0) Gecko/20100101 Firefox/57.0
+# Design number was non-random = 0
+#
+# Columns below this comment are as follows:
+# 1. Time results were received.
+# 2. MD5 hash of participant's IP address.
+# 3. Controller name.
+# 4. Item number.
+# 5. Element number.
+# 6. Type.
+# 7. Group.
+# 8. Field name.
+# 9. Field value.
+1511885173,a19242c1b711a31533dd78240497351f,Form,1,1,image,NULL,aboutImg,hi
+1511885173,a19242c1b711a31533dd78240497351f,Form,1,1,image,NULL,_REACTION_TIME_,8342
+#
+# Results on Wednesday November 29 2017 15:15:07 UTC.
+# USER AGENT: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:57.0) Gecko/20100101 Firefox/57.0
+# Design number was non-random = 1
+#
+# Columns below this comment are as follows:
+# 1. Time results were received.
+# 2. MD5 hash of participant's IP address.
+# 3. Controller name.
+# 4. Item number.
+# 5. Element number.
+# 6. Type.
+# 7. Group.
+# 8. Field name.
+# 9. Field value.
+1511968508,a19242c1b711a31533dd78240497351f,Form,2,0,image,NULL,aboutImg,ddd
+1511968508,a19242c1b711a31533dd78240497351f,Form,2,0,image,NULL,_REACTION_TIME_,4411
+#
+# Results on Wednesday November 29 2017 16:49:23 UTC.
+# USER AGENT: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:57.0) Gecko/20100101 Firefox/57.0
+# Design number was non-random = 2
+#
+# Columns below this comment are as follows:
+# 1. Time results were received.
+# 2. MD5 hash of participant's IP address.
+# 3. Controller name.
+# 4. Item number.
+# 5. Element number.
+# 6. Type.
+# 7. Group.
+# 8. Field name.
+# 9. Field value.
+1511974164,a19242c1b711a31533dd78240497351f,Form,2,0,image,NULL,aboutImg,f
+1511974164,a19242c1b711a31533dd78240497351f,Form,2,0,image,NULL,_REACTION_TIME_,3196
+1511974164,a19242c1b711a31533dd78240497351f,Form,4,0,image,NULL,aboutImg,a
+1511974164,a19242c1b711a31533dd78240497351f,Form,4,0,image,NULL,_REACTION_TIME_,3851
+1511974164,a19242c1b711a31533dd78240497351f,Form,6,0,image,NULL,aboutImg,s
+1511974164,a19242c1b711a31533dd78240497351f,Form,6,0,image,NULL,_REACTION_TIME_,1962
+1511974164,a19242c1b711a31533dd78240497351f,Form,3,0,image,NULL,aboutImg,d
+1511974164,a19242c1b711a31533dd78240497351f,Form,3,0,image,NULL,_REACTION_TIME_,1816
+1511974164,a19242c1b711a31533dd78240497351f,Form,5,0,image,NULL,aboutImg,f
+1511974164,a19242c1b711a31533dd78240497351f,Form,5,0,image,NULL,_REACTION_TIME_,2290
+1511974164,a19242c1b711a31533dd78240497351f,Form,7,0,image,NULL,aboutImg,c
+1511974164,a19242c1b711a31533dd78240497351f,Form,7,0,image,NULL,_REACTION_TIME_,1690
+#
+# Results on Wednesday November 29 2017 21:48:35 UTC.
+# USER AGENT: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:57.0) Gecko/20100101 Firefox/57.0
+# Design number was non-random = 3
+#
+# Columns below this comment are as follows:
+# 1. Time results were received.
+# 2. MD5 hash of participant's IP address.
+# 3. Controller name.
+# 4. Item number.
+# 5. Element number.
+# 6. Type.
+# 7. Group.
+# 8. Field name.
+# 9. Field value.
+1511992116,a19242c1b711a31533dd78240497351f,Form,0,0,intro,NULL,_REACTION_TIME_,1105
+1511992116,a19242c1b711a31533dd78240497351f,Form,5,0,image,NULL,aboutImg,chocolate
+1511992116,a19242c1b711a31533dd78240497351f,Form,5,0,image,NULL,_REACTION_TIME_,2837
+1511992116,a19242c1b711a31533dd78240497351f,Form,7,0,image,NULL,aboutImg,crane
+1511992116,a19242c1b711a31533dd78240497351f,Form,7,0,image,NULL,_REACTION_TIME_,3134
+1511992116,a19242c1b711a31533dd78240497351f,Form,6,0,image,NULL,aboutImg,donut
+1511992116,a19242c1b711a31533dd78240497351f,Form,6,0,image,NULL,_REACTION_TIME_,2647
+1511992116,a19242c1b711a31533dd78240497351f,Form,4,0,image,NULL,aboutImg,hen
+1511992116,a19242c1b711a31533dd78240497351f,Form,4,0,image,NULL,_REACTION_TIME_,2197
+1511992116,a19242c1b711a31533dd78240497351f,Form,2,0,image,NULL,aboutImg,tractor
+1511992116,a19242c1b711a31533dd78240497351f,Form,2,0,image,NULL,_REACTION_TIME_,2188
+1511992116,a19242c1b711a31533dd78240497351f,Form,3,0,image,NULL,aboutImg,dog
+1511992116,a19242c1b711a31533dd78240497351f,Form,3,0,image,NULL,_REACTION_TIME_,2066
+1511992116,a19242c1b711a31533dd78240497351f,Form,9,0,image,NULL,aboutImg,eff
+1511992116,a19242c1b711a31533dd78240497351f,Form,9,0,image,NULL,_REACTION_TIME_,1490
+1511992116,a19242c1b711a31533dd78240497351f,Form,8,0,image,NULL,aboutImg,cat
+1511992116,a19242c1b711a31533dd78240497351f,Form,8,0,image,NULL,_REACTION_TIME_,2977
+1511992116,a19242c1b711a31533dd78240497351f,Form,10,0,image,NULL,aboutImg,toffee
+1511992116,a19242c1b711a31533dd78240497351f,Form,10,0,image,NULL,_REACTION_TIME_,2882
+1511992116,a19242c1b711a31533dd78240497351f,Form,11,0,image,NULL,aboutImg,muffin
+1511992116,a19242c1b711a31533dd78240497351f,Form,11,0,image,NULL,_REACTION_TIME_,2279
+1511992116,a19242c1b711a31533dd78240497351f,Form,1,0,debrief,NULL,purpose,gfds
+1511992116,a19242c1b711a31533dd78240497351f,Form,1,0,debrief,NULL,native,native
+1511992116,a19242c1b711a31533dd78240497351f,Form,1,0,debrief,NULL,_REACTION_TIME_,7135
+#
+# Results on Wednesday November 29 2017 21:55:32 UTC.
+# USER AGENT: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:57.0) Gecko/20100101 Firefox/57.0
+# Design number was non-random = 4
+#
+# Columns below this comment are as follows:
+# 1. Time results were received.
+# 2. MD5 hash of participant's IP address.
+# 3. Controller name.
+# 4. Item number.
+# 5. Element number.
+# 6. Type.
+# 7. Group.
+# 8. Field name.
+# 9. Field value.
+1511992533,a19242c1b711a31533dd78240497351f,Form,0,0,intro,NULL,_REACTION_TIME_,11671
+1511992533,a19242c1b711a31533dd78240497351f,Form,4,0,image,NULL,aboutImg,bird
+1511992533,a19242c1b711a31533dd78240497351f,Form,4,0,image,NULL,_REACTION_TIME_,8436
+1511992533,a19242c1b711a31533dd78240497351f,Form,10,0,image,NULL,aboutImg,caramel
+1511992533,a19242c1b711a31533dd78240497351f,Form,10,0,image,NULL,_REACTION_TIME_,3027
+1511992533,a19242c1b711a31533dd78240497351f,Form,8,0,image,NULL,aboutImg,kitten
+1511992533,a19242c1b711a31533dd78240497351f,Form,8,0,image,NULL,_REACTION_TIME_,3811
+1511992533,a19242c1b711a31533dd78240497351f,Form,5,0,image,NULL,aboutImg,chocolate
+1511992533,a19242c1b711a31533dd78240497351f,Form,5,0,image,NULL,_REACTION_TIME_,3032
+1511992533,a19242c1b711a31533dd78240497351f,Form,6,0,image,NULL,aboutImg,pastry
+1511992533,a19242c1b711a31533dd78240497351f,Form,6,0,image,NULL,_REACTION_TIME_,7163
+1511992533,a19242c1b711a31533dd78240497351f,Form,9,0,image,NULL,aboutImg,egg
+1511992533,a19242c1b711a31533dd78240497351f,Form,9,0,image,NULL,_REACTION_TIME_,3516
+1511992533,a19242c1b711a31533dd78240497351f,Form,7,0,image,NULL,aboutImg,crane
+1511992533,a19242c1b711a31533dd78240497351f,Form,7,0,image,NULL,_REACTION_TIME_,3811
+1511992533,a19242c1b711a31533dd78240497351f,Form,2,0,image,NULL,aboutImg,none
+1511992533,a19242c1b711a31533dd78240497351f,Form,2,0,image,NULL,_REACTION_TIME_,26810
+1511992533,a19242c1b711a31533dd78240497351f,Form,3,0,image,NULL,aboutImg,poodle
+1511992533,a19242c1b711a31533dd78240497351f,Form,3,0,image,NULL,_REACTION_TIME_,3921
+1511992533,a19242c1b711a31533dd78240497351f,Form,11,0,image,NULL,aboutImg,muffin
+1511992533,a19242c1b711a31533dd78240497351f,Form,11,0,image,NULL,_REACTION_TIME_,2250
+1511992533,a19242c1b711a31533dd78240497351f,Form,1,0,debrief,NULL,purpose,
+1511992533,a19242c1b711a31533dd78240497351f,Form,1,0,debrief,NULL,native,native
+1511992533,a19242c1b711a31533dd78240497351f,Form,1,0,debrief,NULL,_REACTION_TIME_,9981
