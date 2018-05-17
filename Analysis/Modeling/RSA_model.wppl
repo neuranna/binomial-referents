@@ -1,0 +1,423 @@
+/* COST FUNCTION */
+
+var cost = function(wordOrder, objectPair, orderParam, sizeParam) {
+  // @wordOrder: either 'AB' or 'BA'
+  // @objectPair: contains information about the order of images (1 = AB, 2 = BA) 
+  // and their sizes (for left and right)
+  var orderMatch = (wordOrder === 'AB') ? objectPair.order === 1 : objectPair.order === 2
+  var orderPenalty = orderMatch ? 0 : orderParam
+  var sizeA = (objectPair.order === 1) ? objectPair.left.size : objectPair.right.size
+  var sizeB = (objectPair.order === 1) ? objectPair.right.size : objectPair.left.size
+  var sizeMatch = (wordOrder === 'AB' && sizeA >= sizeB) || (wordOrder === 'BA' && sizeB >= sizeA) 
+  var sizePenalty = sizeMatch ? 0 : sizeParam
+  return orderPenalty + sizePenalty
+}
+
+var meaningGraded = function(wordOrder, objectPair, orderParam, sizeParam){
+  return -1 * cost(wordOrder, objectPair, orderParam, sizeParam)
+}
+
+/* MODEL0: PRIOR ONLY */
+
+var objectPrior = function(pairList, prior) {
+  return categorical({
+    vs: pairList,
+    ps: prior
+  })
+}
+
+var priorModel = function(wordOrder, pairList, prior) {
+  return Infer(function() {
+    return objectPrior(pairList, prior)
+})}
+
+
+/* MODEL1 (NON-SCALAR): LITERAL LISTENER (L0) with graded meaning */
+var literalListenerGradedMeaning = function(wordOrder, pairList, orderParam, sizeParam, prior){
+  Infer({model: function(){
+    var objectPair = objectPrior(pairList, prior)
+    factor(meaningGraded(wordOrder, objectPair, orderParam, sizeParam))  
+    return objectPair
+}})}
+
+// parameter estimation
+var model1param = function() {
+  Infer({method: "MCMC", samples: 10000}, function(){
+    var orderParam = uniform(-5,5)
+    var sizeParam = uniform(-5,5)
+    mapN(function(i) {
+        var pairList = convertListNotation(lists[i])
+        var value = convertPairNotation(values[i])
+        var prior = priors[i]
+        var posterior = literalListenerGradedMeaning(order[i], pairList, 
+                                                     orderParam, sizeParam, prior)
+        observe(posterior, value)
+      }, 
+      values.length)
+    console.log(Date.now())        // keep track of the execution
+    return {orderParam: orderParam,
+            sizeParam: sizeParam}
+})}
+
+// wrapper for model comparison
+var model1 = function(wordOrder, pairList, prior, orderParam, sizeParam) {
+  return literalListenerGradedMeaning(wordOrder, pairList, 
+                                      orderParam, sizeParam, prior)
+}
+
+
+/* MODEL2: FULL RSA WITH COST FUNCTION AT THE LEVEL OF THE SPEAKER */
+
+var literalListenerCategorical = function(wordOrder, pairList, prior) {
+  return priorModel(wordOrder, pairList, prior)
+}
+
+var speaker = function(objectPair, pairList, orderParam, sizeParam, prior){
+  Infer({model: function(){
+    var wordOrder = flip() ? 'AB' : 'BA'
+    var costScore = cost(wordOrder, objectPair, orderParam, sizeParam)
+    var utility = -1 * costScore
+    factor(utility)
+    return wordOrder
+  }})
+}
+
+var pragmaticListener = function(wordOrder, pairList, orderParam, sizeParam, prior){
+  Infer({model: function(){
+    var objectPair = objectPrior(pairList, prior)
+    observe(speaker(objectPair, pairList, orderParam, sizeParam, prior), 
+            wordOrder)
+    return objectPair
+  }})
+}
+
+// parameter estimation
+var model2param = function() {
+  Infer({method: "MCMC", samples: 10000}, function() {
+    var orderParam = uniform(-5,5)
+    var sizeParam = uniform(-5,5)
+
+    mapN(function(i) {
+        var pairList = convertListNotation(lists[i])
+        var value = convertPairNotation(values[i])
+        var prior = priors[i]
+        var posterior = pragmaticListener(order[i], pairList, 
+                                          orderParam, sizeParam, prior)
+        observe(posterior, value)
+      }, 
+      values.length)
+    console.log(Date.now())
+    return {orderParam: orderParam,
+            sizeParam: sizeParam}
+})}
+
+// wrapper for model comparison
+var model2 = function(wordOrder, pairList, prior, orderParam, sizeParam) {
+    return pragmaticListener(wordOrder, pairList, orderParam, sizeParam, prior)
+}
+
+
+/* READ AND CONVERT INPUT DATA */
+
+// word order
+var order = json.read('order.txt');
+
+// sets of three image pairs (lists) and selected pairs (values)
+var lists = json.read('lists.txt');
+var values = json.read('values.txt');
+
+// prior probability of choosing each pair as estimated by mlogit in R
+var priors = json.read('mlogit_prior.txt');
+
+var convertPairNotation = function(pair) {
+  var leftSize = (pair.order === 1 ? pair.size1 : pair.size2)
+  var rightSize = (pair.order === 1 ? pair.size2 : pair.size1)
+  return {order: pair.order,
+          left: {size: leftSize},
+          right: {size: rightSize}}
+}
+
+var convertListNotation = function(pairList) {
+  return map(function(x) {convertPairNotation(x)}, pairList)
+}
+
+
+/* PARAMETER ESTIMATION */
+
+// 95% confidence limits
+var getConfidenceLimit = function(distVals, cumProb, index) {
+  cumProb >= 0.025 ? distVals[index].val : getConfidenceLimit(distVals, cumProb + distVals[index].prob, index+1)
+}
+
+var getMedian = function(distVals, cumProb, index) {
+  cumProb >= 0.5 ? distVals[index].val : getMedian(distVals, cumProb + distVals[index].prob, index+1)
+}
+
+var getEstimate = function(paramDist, paramName) {
+  var myParamDist = marginalize(paramDist, paramName)
+  var paramAsc = sort(Object.values(myParamDist.getDist()), lt, function(x) {x.val})
+  var paramDesc = sort(Object.values(myParamDist.getDist()), gt, function(x) {x.val})
+  console.log(paramName + ": ")
+  console.log(getConfidenceLimit(paramAsc, 0, 0))
+  console.log(getMedian(paramAsc, 0, 0))
+  console.log(getConfidenceLimit(paramDesc, 0, 0))
+}
+
+
+/* SCATTERPLOT DATA */
+
+var indices2plot = json.read('indices2plot.txt')    // avoid trials with identical setups
+
+var generatePlotDataModel0 = function(usePrior) {
+  map( function(i) {
+    var pairList = convertListNotation(lists[i])
+    var wordOrder = order[i]
+    var prior = usePrior ? priors[i] : [1/3, 1/3, 1/3]
+    return {list: pairList,
+            dist: priorModel(wordOrder, pairList, prior)}
+    }, indices2plot)
+}
+
+var generatePlotDataModel1 = function(usePrior, orderParam, sizeParam) {
+  map( function(i) {
+    var pairList = convertListNotation(lists[i])
+    var wordOrder = order[i]
+    var prior = usePrior ? priors[i] : [1/3, 1/3, 1/3]
+    return {list: pairList,
+            dist: literalListenerGradedMeaning(wordOrder, pairList, orderParam, sizeParam, prior)}
+    }, indices2plot)
+}
+
+var generatePlotDataModel2 = function(usePrior, orderParam, sizeParam) {
+  map( function(i) {
+    var pairList = convertListNotation(lists[i])
+    var wordOrder = order[i]
+    var prior = usePrior ? priors[i] : [1/3, 1/3, 1/3]
+    return {list: pairList,
+            dist: pragmaticListener(wordOrder, pairList, orderParam, sizeParam, prior)}
+    }, indices2plot)
+}
+
+var generatePlotDataModel3 = function(usePrior, orderParam, sizeParam) {
+  map( function(i) {
+    var pairList = convertListNotation(lists[i])
+    var wordOrder = order[i]
+    var prior = usePrior ? priors[i] : [1/3, 1/3, 1/3]
+    return {list: pairList,
+            dist: pragmaticListenerCostL0(wordOrder, pairList, orderParam, sizeParam, prior)}
+    }, indices2plot)
+}
+
+var convertPlottingData = function(result) {
+  var list = result['list']
+  var dist = result['dist']
+  return map(function(val) {Math.exp(dist.score(val))}, list)
+}
+
+
+/* ORDER AND SIZE PREDICTION GENERATION - SIMILATE ALL TRIALS */
+
+// parameters obtained from the parameter estimation step
+var orderModel1 = 2.430161633805154
+var sizeModel1 = 0.46450252129001335
+
+var orderModel2 = 2.320388074412916
+var sizeModel2 = 0.3475837230761014
+ 
+var orderModel1noprior = 2.2473731588344954
+var sizeModel1noprior = 1.156697096202077
+
+var orderModel2noprior = 2.0491213216276893
+var sizeModel2noprior = 0.213309426201862
+
+
+// functions 
+var generateDataModel0 = function(usePrior) {
+  mapN( function(i) {
+    var pairList = convertListNotation(lists[i])
+    var wordOrder = order[i]
+    var prior = usePrior ? priors[i] : [1/3, 1/3, 1/3]
+    return {order: wordOrder,
+            list: pairList,
+            value: sample(priorModel(wordOrder, pairList, prior))}
+    }, lists.length)
+}
+
+var generateDataModel1 = function(usePrior, orderParam, sizeParam) {
+  mapN( function(i) {
+    var pairList = convertListNotation(lists[i])
+    var wordOrder = order[i]
+    var prior = usePrior ? priors[i] : [1/3, 1/3, 1/3]
+    return {order: wordOrder,
+            list: pairList,
+            value: sample(literalListenerGradedMeaning(wordOrder, pairList, orderParam, sizeParam, prior))}
+    }, lists.length)
+}
+
+var generateDataModel2 = function(usePrior, orderParam, sizeParam) {
+  mapN( function(i) {
+    var pairList = convertListNotation(lists[i])
+    var wordOrder = order[i]
+    var prior = usePrior ? priors[i] : [1/3, 1/3, 1/3]
+    return {order: wordOrder,
+            list: pairList,
+            value: sample(pragmaticListener(wordOrder, pairList, orderParam, sizeParam, prior))}
+    }, lists.length)
+}
+
+
+var relSize = function(result, wordOrder) {
+  // @result: object returned by one of the generating functions (contains information about word order,
+  // three image pairs (list) and the chosen image pair (value) [note: wordOrder might be redundant]
+  // returns -1 if the first mentioned image is smaller, 1 if it's larger, 0 if they are equal
+  var objectPair = result.value
+  var sizeA = (objectPair.order === 1) ? objectPair.left.size : objectPair.right.size
+  var sizeB = (objectPair.order === 1) ? objectPair.right.size : objectPair.left.size
+  var size1st = (wordOrder === 'AB') ? sizeA : sizeB
+  var size2nd = (wordOrder === 'AB') ? sizeB : sizeA  
+
+  var sizeCompare = size1st < size2nd ? -1 : (size1st > size2nd ? 1 : 0)
+  return sizeCompare
+}
+
+var processResults = function(results) {
+  var resultsAB = filter(function(result) {result.order==='AB'}, results)
+  var resultsBA = filter(function(result) {result.order==='BA'}, results)
+
+  // order
+  var percentLeftAB = sum(map(function(result) {result.value.order === 1 ? 1 : 0}, resultsAB)) / resultsAB.length
+  var percentLeftBA = sum(map(function(result) {result.value.order === 2 ? 1 : 0}, resultsBA)) / resultsBA.length
+  var percentLeft = (percentLeftAB + percentLeftBA) / 2
+
+  //size
+  var percentSmallerAB = sum(map(function(result) {relSize(result, 'AB') === -1}, resultsAB)) / resultsAB.length
+  var percentSameAB = sum(map(function(result) {relSize(result, 'AB') === 0}, resultsAB)) / resultsAB.length
+  var percentSmallerBA = sum(map(function(result) {relSize(result, 'BA') === -1}, resultsBA)) / resultsBA.length
+  var percentSameBA = sum(map(function(result)  {relSize(result, 'BA') === 0}, resultsBA)) / resultsBA.length
+  var percentSmaller = (percentSmallerAB + percentSmallerBA) / 2
+  var percentSame = (percentSameAB + percentSameBA) / 2
+
+  return {order: [percentLeft, 1 - percentLeft],
+          size: [percentSmaller, percentSame, 1 - percentSmaller - percentSame]}
+}
+
+
+var getPredictions = function(generateData, usePrior, orderParam, sizeParam, alpha) {
+  var numSubjects = 106
+  var results = repeat(numSubjects, function() {processResults(generateData(usePrior, orderParam, sizeParam, alpha))})
+  // order
+  var percentLeftMean = listMean(map(function(res) {res.order[0]}, results))
+  var percentLeftStd = listStdev(map(function(res) {res.order[0]}, results))
+  var percentRightMean = listMean(map(function(res) {res.order[1]}, results))
+  var percentRightStd = listStdev(map(function(res) {res.order[1]}, results))
+
+  // size
+  var percentSmallerMean = listMean(map(function(res) {res.size[0]}, results))
+  var percentSmallerStd = listStdev(map(function(res) {res.size[0]}, results))
+  var percentSameMean = listMean(map(function(res) {res.size[1]}, results))
+  var percentSameStd = listStdev(map(function(res) {res.size[1]}, results))
+  var percentLargerMean = listMean(map(function(res) {res.size[2]}, results))
+  var percentLargerStd = listStdev(map(function(res) {res.size[2]}, results))
+
+  return {order: {mean: [percentLeftMean, percentRightMean], 
+                  std: [percentLeftStd, percentRightStd]},
+          size: {mean: [percentSmallerMean, percentSameMean, percentLargerMean],
+                 std: [percentSmallerStd, percentSameStd, percentLargerStd]}}
+}
+
+
+/* COMPARE DATA LIKELIHOOD UNDER EACH MODEL */
+// used for Bayes factor comparisons - not in the paper
+
+var getMeanFromLogVals = function(logVals) {
+  // substract max log value, find the mean of exponentiated resulting log probs, 
+  // take the log and add the max value back
+  var maxVal = reduce(function(a, b) { return Math.max(a,b)}, Number.NEGATIVE_INFINITY, logVals)
+  var probMean = listMean(map(function(x) {return Math.exp(x - maxVal)}, logVals))
+  return Math.log(probMean) + maxVal
+}
+
+// Monte-Carlo evaluation
+var getDataScoreMC = function(model, modelName, usePrior) {
+  globalStore.count = 0
+  var dataProbs = repeat(10000, function() {
+
+    console.log(globalStore.count)
+    globalStore.count+=1
+
+    var orderParam = uniform(0,5)
+    var sizeParam = uniform(0,5)
+
+    var modelScores = mapN(function(i) {
+      // determine variable values
+      var prior = usePrior ? priors[i] : [1/3, 1/3, 1/3]
+      var pairList = convertListNotation(lists[i])
+      var pair = convertPairNotation(values[i])
+      // calculate
+      var posterior = model(order[i], pairList, prior, orderParam, sizeParam)
+      return posterior.score(pair)   
+    },
+    values.length)   
+   
+    return sum(modelScores)
+  })
+
+  json.write(modelName + '_MC_bayes.txt', dataProbs)
+  return getMeanFromLogVals(dataProbs)
+}
+
+// MCMC evaluation
+var getDataScoreMCMC = function(model, modelName, usePrior) {
+  var dataPosterior = Infer({method: "MCMC", samples: 10000, verbose: true}, function() {
+
+    var orderParam = uniform(0,5)
+    var sizeParam = uniform(0,5)
+
+    var modelScores = mapN(function(i) {
+      // determine variable values
+      var prior = usePrior ? priors[i] : [1/3, 1/3, 1/3]
+      var pairList = convertListNotation(lists[i])
+      var pair = convertPairNotation(values[i])
+      // calculate
+      var posterior = model(order[i], pairList, prior, orderParam, sizeParam)
+      return posterior.score(pair)   
+    },
+    values.length)   
+   
+    return sum(modelScores)
+  })
+  
+  var dataProbs = Object.keys(dataPosterior.getDist())
+  json.write(modelName + '_MCMC_bayes.txt', dataProbs)
+  return getMeanFromLogVals(dataProbs)
+}
+
+
+/* SAMPLE RUNS FOR ALL SECTIONS ABOVE */
+
+/*
+
+// parameter estimation
+console.log('MODEL 1')
+var paramDist = model1param()
+getEstimate(paramDist, "orderParam")
+getEstimate(paramDist, "sizeParam")
+
+// scatterplot data generation
+console.log('MODEL 1')
+var data1 = map(convertPlottingData, generatePlotDataModel1(usePrior, orderModel1noprior, sizeModel1noprior))
+json.write('plot_data_model1_noprior.txt', data1)
+
+// size & order prediction generation for all trials
+console.log('MODEL 1')
+console.log(getPredictions(generateDataModel1, usePrior, orderModel1, sizeModel1))
+
+// data likelihood evaluation (irrespective of parameters)
+var usePrior = false 
+var modelName = "MODEL 1" 
+var modelType = ( modelName === "MODEL 1" ? model1 : (modelName === "MODEL 2" ? model2 : model3) )
+console.log(getDataScoreMC(modelType, modelName, usePrior))
+console.log(modelName)
+
+*/
+
