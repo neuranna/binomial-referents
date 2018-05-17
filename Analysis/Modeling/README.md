@@ -9,4 +9,6 @@ Contains code to generate data for the modeling section. Concretely, RSA\_model.
 
 
 Prerequisites: WebPPL should be installed
-How to run: choose one or more of the modules to run, modify commented out commands at the bottom of the file ("SAMPLE RUNS"), and run the program using WebPPL: `webppl RSA_model.wppl --require webppl-json`
+How to run: choose one or more of the modules to run, modify commented out commands at the bottom of the file ("SAMPLE RUNS"), and run the program using WebPPL: 
+
+`webppl RSA_model.wppl --require webppl-json`
