@@ -1,3 +1,5 @@
+**Attention: The code in this directory is distributed under the BSD3 license (not MIT license like the rest of the repo)**
+
 # Experiment Setup
 
 Experiments were run on [Ibex Farm](http://spellout.net/ibexfarm/). 
