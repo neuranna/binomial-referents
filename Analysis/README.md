@@ -6,6 +6,7 @@ Sections contained in "Binomials Analysis 1":
 - data preprocessing for the RSA models
 - prior preferences (fig.)
 - behavioral vs. model-predicted order and size preferences (fig.)
+- data preprocessing for prior preference prediction analyses in R
 
 Sections contained in "Binomials Analysis 2":
 - data preprocessing for mixed effect regression analyses in R
